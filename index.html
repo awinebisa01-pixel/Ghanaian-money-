@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoMo Premium Dynamic Interface</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        :root {
+            --momo-yellow: #FFCC00;
+            --momo-blue: #004F71;
+            --momo-dark: #1A1A1A;
+            --bg-light: #F5F6F8;
+            --card-bg: #FFFFFF;
+            --text-muted: #7E8B9A;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Device Simulator Frame */
+        .phone-container {
+            width: 390px;
+            height: 844px;
+            background-color: var(--bg-light);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Navigation */
+        .app-header {
+            background-color: var(--momo-yellow);
+            padding: 55px 20px 20px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .back-btn {
+            font-size: 20px;
+            color: var(--momo-dark);
+            cursor: pointer;
+            visibility: hidden;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--momo-dark);
+        }
+
+        .momo-logo-main {
+            position: absolute;
+            right: 20px;
+            top: 50px;
+            width: 45px;
+            height: 45px;
+            background: var(--momo-blue);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        /* Screen Content Containers */
+        .screen-content {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .screen-content.active {
+            display: block;
+        }
+
+        /* --- DASHBOARD VIEW --- */
+        .balance-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            border-left: 5px solid var(--momo-blue);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+            margin-bottom: 25px;
+        }
+
+        .balance-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .balance-value {
+            font-size: 25px;
+            font-weight: 800;
+            color: var(--momo-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .login-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--momo-dark);
+            margin-bottom: 15px;
+        }
+
+        /* Services Action Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .service-item {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .service-item:active {
+            transform: scale(0.95);
+        }
+
+        .service-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(0, 79, 113, 0.08);
+            color: var(--momo-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .service-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--momo-dark);
+            text-align: center;
+        }
+
+        .promo-banner {
+            background: linear-gradient(135deg, #022534, #004F71);
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+        }
+
+        .promo-banner h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .promo-banner p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* --- TRANSACTION FORM --- */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--momo-dark);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .network-selector {
+            background: #EAEAEA;
+            padding: 15px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--momo-dark);
+        }
+
+        .network-dot {
+            background: var(--momo-blue);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .input-wrapper {
+            position: relative;
+            background: var(--card-bg);
+            border: 1px solid #E2E8F0;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            font-weight: 600;
+            background: transparent;
+        }
+
+        .input-icon-right {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--momo-blue);
+            font-size: 18px;
+        }
+
+        .action-button {
+            background-color: var(--momo-yellow);
+            color: var(--momo-dark);
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 30px;
+            box-shadow: 0 6px 16px rgba(255, 204, 0, 0.3);
+        }
+
+        /* --- DYNAMIC ALERT POPUP --- */
+        .sms-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 50px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sms-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .sms-bubble {
+            width: 92%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 18px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            transform: translateY(-40px);
+            transition: transform 0.3s ease;
+        }
+
+        .sms-overlay.visible .sms-bubble {
+            transform: translateY(0);
+        }
+
+        .sms-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .sms-sender-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sms-app-icon {
+            width: 20px;
+            height: 20px;
+            background: var(--momo-yellow);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .sms-title {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .sms-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .sms-body {
+            font-size: 13.5px;
+            line-height: 1.45;
+            color: #222;
+        }
+
+        .sms-link {
+            color: #0066CC;
+            text-decoration: none;
+        }
+
+        /* Bottom Tab Navigator */
+        .bottom-nav {
+            height: 75px;
+            background: var(--card-bg);
+            border-top: 1px solid #EAEAEA;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 12px;
+        }
+
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .nav-tab.active {
+            color: var(--momo-blue);
+        }
+
+        .nav-tab i {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <header class="app-header">
+        <div class="back-btn" id="headerBackBtn" onclick="navigateTo('dashboard')"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="header-title" id="headerTitle">MoMo</div>
+        <div class="momo-logo-main">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 22 2.01 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="#FFCC00"/>
+            </svg>
+        </div>
+    </header>
+
+    <div id="screen-dashboard" class="screen-content active">
+        <div class="balance-card">
+            <div class="balance-label">
+                <i class="fa-solid fa-mobile-screen"></i> MoMo Balance
+            </div>
+            <div class="balance-amount-row">
+                <div class="balance-value" id="displayBalanceHolder">GHS 9,000,000.00</div>
+                <div style="color: var(--momo-blue); cursor:pointer;"><i class="fa-solid fa-eye-slash"></i></div>
+            </div>
+            <div class="login-meta">Last login: 5/17/2026 at 2:05:59 AM</div>
+        </div>
+
+        <h3 class="section-title">Services</h3>
+        <div class="services-grid">
+            <div class="service-item" onclick="navigateTo('send')">
+                <div class="service-icon"><i class="fa-solid fa-user-plus"></i></div>
+                <div class="service-label">Send MoMo</div>
+            </div>
+            <div class="service-item">
+                <div class="service-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                <div class="service-label">Statement</div>
+            </div>
+            <div class="service-item">
+                <div class="service-icon"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
+                <div class="service-label">Cashout</div>
+            </div>
+            <div class="service-item">
+                <div class="service-icon"><i class="fa-solid fa-signature"></i></div>
+                <div class="service-label">Approvals</div>
+            </div>
+            <div class="service-item">
+                <div class="service-icon"><i class="fa-solid fa-qrcode"></i></div>
+                <div class="service-label">MoMo Pay</div>
+            </div>
+            <div class="service-item">
+                <div class="service-icon"><i class="fa-solid fa-building-columns"></i></div>
+                <div class="service-label">Bank Services</div>
+            </div>
+        </div>
+
+        <h3 class="section-title">Get Broadband</h3>
+        <div class="promo-banner">
+            <h4>Fibre Broadband</h4>
+            <p>Get high-speed connection for your home setups seamlessly today.</p>
+        </div>
+    </div>
+
+    <div id="screen-send" class="screen-content">
+        <p style="font-size: 14px; font-weight: 600; color: var(--momo-dark); margin-bottom: 20px;">Sending MoMo to MoMo wallets</p>
+        
+        <div class="form-group">
+            <label class="form-label">Select Network</label>
+            <div class="network-selector">
+                <div class="network-dot"></div>
+                MTN
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Enter Number...</label>
+            <div class="input-wrapper">
+                <input type="tel" placeholder="054XXXXXXX" id="recipientPhone">
+                <div class="input-icon-right"><i class="fa-solid fa-address-book"></i></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Enter Amount</label>
+            <div class="input-wrapper">
+                <input type="number" placeholder="0.00" id="sendAmount">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Enter reference</label>
+            <div class="input-wrapper">
+                <input type="text" placeholder="Reference note" id="sendReference">
+            </div>
+        </div>
+
+        <button class="action-button" onclick="executeDeductionTransaction()">NEXT</button>
+    </div>
+
+    <footer class="bottom-nav">
+        <div class="nav-tab" onclick="navigateTo('dashboard')"><i class="fa-solid fa-house"></i>Home</div>
+        <div class="nav-tab"><i class="fa-solid fa-bag-shopping"></i>Shop</div>
+        <div class="nav-tab active"><i class="fa-solid fa-wallet"></i>MoMo</div>
+        <div class="nav-tab"><i class="fa-solid fa-ellipsis"></i>More</div>
+    </footer>
+
+    <div class="sms-overlay" id="smsNotificationOverlay" onclick="dismissNotification()">
+        <div class="sms-bubble" onclick="event.stopPropagation();">
+            <div class="sms-header">
+                <div class="sms-sender-info">
+                    <div class="sms-app-icon">M</div>
+                    <span class="sms-title">MobileMoney</span>
+                </div>
+                <span class="sms-time">Just Now</span>
+            </div>
+            <div class="sms-body" id="smsDynamicBody">
+                </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // System core state tracking setup variable
+    let globalWalletBalance = 9000000.00;
+    const fixedFeeCharge = 1.50;
+
+    // Names assigned dynamically upon generation cycles
+    const namesPool = [
+        "ADAM YAKUBU", "KWAME MENSAH", "ABENA OSEI", "BERNARD ANKRAH", 
+        "EMMANUEL TETTEH", "AMMA AGYEMANG", "KOFI ADO", "CHRETIEN ATA"
+    ];
+
+    // Formatter engine for standard local currency viewing loops
+    function formatCurrency(value) {
+        return "GHS " + value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Refresh display layout indicators
+    function updateBalanceUI() {
+        document.getElementById('displayBalanceHolder').innerText = formatCurrency(globalWalletBalance);
+    }
+
+    function navigateTo(screenId) {
+        document.querySelectorAll('.screen-content').forEach(screen => {
+            screen.classList.remove('active');
+        });
+        document.getElementById('screen-' + screenId).classList.add('active');
+        
+        const titleElement = document.getElementById('headerTitle');
+        const backBtn = document.getElementById('headerBackBtn');
+        
+        if(screenId === 'send') {
+            titleElement.innerText = "Send MoMo";
+            backBtn.style.visibility = "visible";
+        } else {
+            titleElement.innerText = "MoMo";
+            backBtn.style.visibility = "hidden";
+        }
+    }
+
+    function executeDeductionTransaction() {
+        const inputAmountRaw = document.getElementById('sendAmount').value;
+        const sendAmountValue = parseFloat(inputAmountRaw) || 0.00;
+        const inputRef = document.getElementById('sendReference').value || "T.";
+        
+        if (sendAmountValue <= 0) {
+            alert("Please enter a valid transfer value.");
+            return;
+        }
+
+        const totalCost = sendAmountValue + fixedFeeCharge;
+
+        if (totalCost > globalWalletBalance) {
+            alert("Insufficient balance funds to complete operation transaction.");
+            return;
+        }
+
+        // Processing arithmetic math updates internally
+        globalWalletBalance -= totalCost;
+        updateBalanceUI();
+
+        // Choosing randomized strings from storage configurations
+        const randomName = namesPool[Math.floor(Math.random() * namesPool.length)];
+        const transactionId = Math.floor(8000000000 + Math.random() * 2000000000);
+        const printableBalance = globalWalletBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        // Assembling systemic structural notification format layout blocks
+        const smsContent = `Payment made for <strong>GHS ${sendAmountValue.toFixed(2)}</strong> to <strong>${randomName}</strong> Current Balance: GHS ${printableBalance} . Available Balance: GHS ${printableBalance}. Reference: ${inputRef}. Transaction ID: <a href="#" class="sms-link">${transactionId}</a>. Fee charged: GHS1.50 Tax charged: 0. Download the MoMo App for a Faster & Easier Experience. Click here: <a href="#" class="sms-link">https://mtn.gh/momo</a>`;
+        
+        document.getElementById('smsDynamicBody').innerHTML = smsContent;
+        
+        // Show simulated receipt message
+        document.getElementById('smsNotificationOverlay').classList.add('visible');
+
+        // Clear dynamic values from structural inputs
+        document.getElementById('sendAmount').value = '';
+        document.getElementById('sendReference').value = '';
+    }
+
+    function dismissNotification() {
+        document.getElementById('smsNotificationOverlay').classList.remove('visible');
+        navigateTo('dashboard'); // Redirect to dashboard interface views
+    }
+
+    // Initialize layout settings values
+    window.onload = function() {
+        updateBalanceUI();
+        navigateTo('dashboard');
+    }
+</script>
+</body>
+</html>

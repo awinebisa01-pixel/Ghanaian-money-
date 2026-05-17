@@ -1,1 +1,0 @@
-# Ghanaian-money-
